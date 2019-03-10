@@ -3,13 +3,17 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+// add to DOM
 var div = document.getElementById("app");
 div.appendChild(renderer.domElement);
+
+// WIDTH & HEIGHT of the plane
 const WIDTH = 500;
 const HEIGHT = 500;
 
 // Plane geometry
-var planeGeometry = new THREE.PlaneGeometry(500, 500, 1, 1)
+var planeGeometry = new THREE.PlaneGeometry(WIDTH, HEIGHT, 1, 1)
 var ground_texture = THREE.ImageUtils.loadTexture('images/gtasa.png', {}, function() {
     renderer.render(scene,camera);
 });
@@ -36,26 +40,29 @@ camera.position.y = -300
 camera.rotation.x = 45 * Math.PI / 180
 plane.rotation.x = 180 * Math.PI / 180
 
+// Line for each player
 var lines = [];
+
+// Material for each line
 var material = new THREE.LineBasicMaterial( {
 	color: 0xff0000,
 	linewidth: 1000,
 } );
 
-let mX = 3000
-let mY = 3000
-
+// Utility function to convert MTA:SA coordinates to the threeJS plane.
 function worldCoordsToPlane(position){
+	const mX = 3000;
+	const mY = 3000;
     let radians = (Math.PI * 2) - plane.rotation.z;
-    //console.log("Radians: " + radians);
     let x = (position[0] / mX) * (WIDTH*0.5)
     let y = (position[1] / mY) * (HEIGHT*0.5)
+	// Rotate the opposite direction.
     let nx = x * Math.cos(radians) - y * Math.sin(radians);
     let ny = x * Math.sin(radians) + y * Math.cos(radians);
-    //console.log(`(${x}, ${y})`);
     return {x: nx, y: ny, z: position[2]};
 }
 
+// Draw players
 function drawPlayers(players){
     if (!players) return;
     for (var i = 0; i <= lines.length -1; i++){
@@ -68,24 +75,46 @@ function drawPlayers(players){
         let position = worldCoordsToPlane(players[i].position);
         pGeo.vertices.push(new THREE.Vector3(position.x, position.y, 0));
         pGeo.vertices.push(new THREE.Vector3(position.x, position.y, position.z));
-        console.log("z: "+ position.z);
         let line = new THREE.Line(pGeo, material);
-
         lines.push(line);
         scene.add(line);
     }
 }
 
+// Animate
 var animate = function() {
-    let date = new Date();
-    let tick = date.getTime();
-
-    drawPlayers(playerInfo);
-    requestAnimationFrame(animate);
+	requestAnimationFrame(animate);
     plane.rotation.z += 0.001;
     if (plane.rotation.z >= Math.PI * 2){
         plane.rotation.z = 0;
     }
+	drawPlayers(playerInfo);
     renderer.render(scene, camera)
 };
 animate();
+
+
+raycaster = new THREE.Raycaster();
+mouse = new THREE.Vector2();
+
+
+function onWindowResize() {        
+    camera.left = window.innerWidth / - 2;
+    camera.right = window.innerWidth / 2;
+    camera.top = window.innerHeight / 2;
+    camera.bottom = window.innerHeight / - 2;
+    camera.aspect = window.innerWidth / window.innerHeight;        
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
+function onDocumentMouseWheel( event ) {
+
+    var fovMAX = 160;
+    var fovMIN = 1;
+
+    camera.fov -= event.wheelDeltaY * 0.05;
+    camera.fov = Math.max( Math.min( camera.fov, fovMAX ), fovMIN );
+	camera.updateProjectionMatrix ()
+}
+document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
+document.addEventListener("resize", myScript);
