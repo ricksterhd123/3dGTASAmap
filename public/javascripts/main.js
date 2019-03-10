@@ -35,8 +35,8 @@ var plane = new THREE.Mesh(planeGeometry, ground_material);
 scene.add(plane);
 
 // Positioning & animation
-camera.position.z = 150;
-camera.position.y = -300
+camera.position.z = 200;
+camera.position.y = -400
 camera.rotation.x = 45 * Math.PI / 180
 plane.rotation.x = 180 * Math.PI / 180
 
