@@ -74,7 +74,7 @@ function drawPlayers(players){
         let pGeo = new THREE.Geometry();
         let position = worldCoordsToPlane(players[i].position);
         pGeo.vertices.push(new THREE.Vector3(position.x, position.y, 0));
-        pGeo.vertices.push(new THREE.Vector3(position.x, position.y, position.z));
+        pGeo.vertices.push(new THREE.Vector3(position.x, position.y, 100));
         let line = new THREE.Line(pGeo, material);
         lines.push(line);
         scene.add(line);
