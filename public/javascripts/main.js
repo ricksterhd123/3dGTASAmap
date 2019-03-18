@@ -1,6 +1,7 @@
 var lastTick = 0;
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -8,6 +9,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 var div = document.getElementById("app");
 div.appendChild(renderer.domElement);
 
+var controls = new THREE.OrbitControls(camera);
+// scene.add(controls.getObject())
 // WIDTH & HEIGHT of the plane
 const WIDTH = 500;
 const HEIGHT = 500;
@@ -98,12 +101,12 @@ raycaster = new THREE.Raycaster();
 mouse = new THREE.Vector2();
 
 
-function onWindowResize() {        
+function onWindowResize() {
     camera.left = window.innerWidth / - 2;
     camera.right = window.innerWidth / 2;
     camera.top = window.innerHeight / 2;
     camera.bottom = window.innerHeight / - 2;
-    camera.aspect = window.innerWidth / window.innerHeight;        
+    camera.aspect = window.innerWidth / window.innerHeight;
 
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
@@ -117,4 +120,3 @@ function onDocumentMouseWheel( event ) {
 	camera.updateProjectionMatrix ()
 }
 document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
-document.addEventListener("resize", myScript);
